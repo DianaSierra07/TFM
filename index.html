@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Leaflet Mapa de Cartagena</title>
+  <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+  <link rel="stylesheet" href="cartagena-styles.css" />
+  <style>
+    #mapa {
+      width: 90%;
+      height: 600px;
+    }
+  </style>
+
+  <!-- Archivos GeoJSON -->
+  <script src="cartagena_barrios.js"></script>
+  <script src="cartagena_zinfluencia.js"></script>
+  <script src="cartagena_inmueblesd.js"></script>
+  <script src="cartagena_aturisticas.js"></script>
+  <script src="cartagena_bibliotecas.js"></script>
+  <script src="cartagena_iglesias.js"></script>
+  <script src="cartagena_roads.js"></script>
+  <script src="cartagena_erosioncostera.js"></script>
+  <script src="agua_2020.js"></script>
+  <script src="agua_2025.js"></script>
+  <script src="agua_2040.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1 style="font-size: 32px; color:#0000FF; text-align: center">Mapa Patrimonio Cultural Catagena de Indias</h1>
+    <p style="font-size: 20px; color:#00FFFF; text-align: center">Master Universitario en Geotecnologías Cartográficas</p>
+    <p style="font-size: 20px; color:#00FFFF; text-align: center">Diana L. Sierra E.</p>
+  </header>
+
+  <div id="mapa"></div>
+
+  <script>
+    function getColor(d) {
+      return d > 10 ? '#800026' :
+             d > 5 ? '#BD0026' :
+             d > 3 ? '#E31A1C' :
+             d > 2 ? '#FC4E2A' :
+             d > 1 ? '#FD8D3C' :
+             d > 0.5 ? '#FEB24C' :
+             d > 0.25 ? '#FED976' :
+                        '#FFEDA0';
+    }
+
+    function style(feature) {
+      return {
+        fillColor: getColor(feature.properties.ID || 1),
+        weight: 2,
+        opacity: 1,
+        color: 'black',
+        fillOpacity: 0.8
+      };
+    }
+
+    function roadStyle(feature) {
+      return {
+        color: '#000000',
+        weight: 1,
+        opacity: 1
+      };
+    }
+
+    var osmMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> Contributors'
+    });
+
+    var mimapa = L.map('mapa', {
+      measureControl: true,
+      maxZoom: 20,
+      center: [10.3910, -75.4794],
+      zoom: 13
+    });
+
+    osmMap.addTo(mimapa);
+
+    L.marker([10.4237, -75.5475]).addTo(mimapa)
+      .bindPopup("<b>Ubicación</b><br>Plaza de la Aduana, Cartagena.")
+      .openPopup();
+	  
+
+
+	// Icono iglesia
+    var iconoIglesia = L.icon({
+      iconUrl: 'iglesia.png',
+      iconSize: [15, 15],
+      iconAnchor: [15, 30],
+      popupAnchor: [0, -30]
+    });
+    // Icono inmueble 
+    var iconoInmueble = L.icon({
+      iconUrl: 'inmuebles.png',
+      iconSize: [15, 15],
+      iconAnchor: [15, 30],
+      popupAnchor: [0, -30]
+    });
+    // Icono biblioteca
+    var iconoLibro = L.icon({
+      iconUrl: 'libro.png',
+      iconSize: [15, 15],
+      iconAnchor: [15, 30],
+      popupAnchor: [0, -30]
+    });
+	
+	// Icono Turismo
+    var iconoTurismo = L.icon({
+      iconUrl: 'pturistico.png',
+      iconSize: [15, 15],
+      iconAnchor: [15, 30],
+      popupAnchor: [0, -30]
+    });
+	
+	
+	// Capas estilo e informacion
+    var capa_barrios = L.geoJson(cartagena_barrios, { style: style }).addTo(mimapa);
+
+    var capa_zinfluencia = L.geoJson(cartagena_zinfluencia, {
+      style: style,
+      onEachFeature: function (feature, layer) {
+        var zona = feature.properties.Zona_Inf || "No disponible";
+        layer.bindPopup("<b>Zona de Influencia:</b> " + zona);
+      }
+    }).addTo(mimapa);
+
+
+    var capa_aturisticas = L.geoJson(cartagena_aturisticas, {
+      pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, { icon: iconoTurismo });
+      },
+      onEachFeature: function (feature, layer) {
+        var nombre = feature.properties.nombre || "Sitio Turístico";
+        layer.bindPopup('<b>' + nombre + '</b>');
+      }
+    }).addTo(mimapa);
+
+
+    var capa_inmueblesd = L.geoJson(cartagena_inmueblesd, {
+      pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, { icon: iconoInmueble});
+      },
+      onEachFeature: function (feature, layer) {
+        var nombre = feature.properties.nombre || "Inmueble";
+        layer.bindPopup('<b>' + nombre + '</b>');
+      }
+    }).addTo(mimapa);
+
+    var capa_bibliotecas = L.geoJson(cartagena_bibliotecas, {
+      pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, { icon: iconoLibro });
+      },
+      onEachFeature: function (feature, layer) {
+        var nombre = feature.properties.nombre || "Biblioteca";
+        layer.bindPopup('<b>' + nombre + '</b>');
+      }
+    }).addTo(mimapa);
+
+    var capa_iglesias = L.geoJson(cartagena_iglesias, {
+      pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, { icon: iconoIglesia });
+      },
+      onEachFeature: function (feature, layer) {
+        var nombre = feature.properties.nombre || "Iglesia";
+        layer.bindPopup('<b>' + nombre + '</b>');
+      }
+    }).addTo(mimapa);
+
+    var capa_roads = L.geoJson(cartagena_roads, { style: roadStyle }).addTo(mimapa);
+	
+	var capa_agua2020 = L.geoJson(agua_2020, {
+	style: {
+        color: '#006A89',
+        weight: 4,
+        dashArray: '4,4'
+      },
+      onEachFeature: function (feature, layer) {
+        var desc = feature.properties.descripcion || "Ascenso Mar 2020";
+        layer.bindPopup('<b>Capa Agua 2020:</b> ' + desc);
+      }
+    }).addTo(mimapa);
+	
+	var capa_agua2025 = L.geoJson(agua_2025, { 
+	style: {
+        color: '#006A89',
+        weight: 4,
+        dashArray: '4,4'
+      },
+      onEachFeature: function (feature, layer) {
+        var desc = feature.properties.descripcion || "Ascenso Mar 2020";
+        layer.bindPopup('<b>Capa Agua 2025:</b> ' + desc);
+      }
+    }).addTo(mimapa);
+	
+	var capa_agua2040 = L.geoJson(agua_2040, { 
+	style: {
+        color: '#006A89',
+        weight: 4,
+        dashArray: '4,4'
+      },
+      onEachFeature: function (feature, layer) {
+        var desc = feature.properties.descripcion || "Ascenso Mar 2020";
+        layer.bindPopup('<b>Capa Agua 2040:</b> ' + desc);
+      }
+    }).addTo(mimapa);	
+ 
+    var capa_erosioncostera = L.geoJson(cartagena_erosioncostera, {
+      style: {
+        color: '#006A89',
+        weight: 4,
+        dashArray: '4,4'
+      },
+      onEachFeature: function (feature, layer) {
+        var desc = feature.properties.descripcion || "Área con erosión costera";
+        layer.bindPopup('<b>Erosión Costera:</b> ' + desc);
+      }
+    }).addTo(mimapa);
+
+    // Capas base y superpuestas
+    var capasbase = {
+      "Mapa OpenStreetMap": osmMap
+    };
+
+    var capasadicionales = {
+      "Barrios de Cartagena": capa_barrios,
+      "Zona de Influencia": capa_zinfluencia,
+      "Inmuebles Distrito": capa_inmueblesd,
+      "Áreas Turísticas": capa_aturisticas,
+      "Iglesias": capa_iglesias,
+      "Bibliotecas": capa_bibliotecas,
+      "Carreteras": capa_roads,
+      "Erosión Costera": capa_erosioncostera,
+	  "Nivel del Mar 2020": capa_agua2020,
+	  "Nivel del Mar 2025": capa_agua2025,
+	  "Nivel del Mar 2040": capa_agua2040
+    };
+
+    L.control.layers(capasbase, capasadicionales).addTo(mimapa);
+  </script>
+</body>
+</html>

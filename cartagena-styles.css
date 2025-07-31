@@ -1,0 +1,253 @@
+/* Hoja de estilos para Mapa de Cartagena - Estilo IDE España */
+/* Archivo: cartagena-styles.css */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+
+/* Reset y configuración base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Header principal */
+header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 25px 0;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Títulos del header */
+h1 {
+    font-size: 3rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: -1px;
+    color: white !important;
+    text-align: center !important;
+    position: relative;
+    z-index: 2;
+}
+
+header p {
+    font-size: 1.3rem !important;
+    font-weight: 300 !important;
+    margin-bottom: 5px !important;
+    opacity: 0.9;
+    color: white !important;
+    text-align: center !important;
+    position: relative;
+    z-index: 2;
+}
+
+header p:last-child {
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    opacity: 0.8;
+    margin-top: 10px !important;
+}
+
+/* Contenedor del mapa */
+body > div:last-child,
+#mapa {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* Wrapper para el mapa */
+#mapa {
+    width: 90% !important;
+    height: 600px !important;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin: 0 auto;
+}
+
+/* Agregar header al mapa */
+#mapa::before {
+    content: 'Visualización Geográfica de Cartagena de Indias';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 15px 20px;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    z-index: 1000;
+}
+
+/* Ajustar el mapa para el header */
+#mapa .leaflet-container {
+    margin-top: 55px;
+    height: calc(100% - 55px);
+}
+
+/* Personalización de controles de Leaflet */
+.leaflet-control-layers {
+    background: rgba(248, 249, 250, 0.95) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+.leaflet-control-layers-toggle {
+    background-color: #2a5298 !important;
+    border-radius: 4px !important;
+}
+
+.leaflet-control-zoom {
+    border: none !important;
+}
+
+.leaflet-control-zoom a {
+    background: rgba(248, 249, 250, 0.95) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    color: #2a5298 !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    transition: all 0.2s ease !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background: #2a5298 !important;
+    color: white !important;
+    border-color: #2a5298 !important;
+}
+
+.leaflet-control-zoom a:first-child {
+    border-top-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+}
+
+.leaflet-control-zoom a:last-child {
+    border-bottom-left-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+}
+
+.leaflet-popup-content-wrapper {
+    background: white !important;
+    border-radius: 6px !important;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-popup-content {
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+    background: white !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Footer informativo después del mapa */
+#mapa::after {
+    content: 'Información: Utiliza los controles de capas para mostrar/ocultar diferentes elementos del mapa. Haz clic en el mapa para obtener más información sobre cada área.';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #f8f9fa;
+    padding: 12px 20px;
+    border-top: 1px solid #dee2e6;
+    font-size: 0.85rem;
+    color: #6c757d;
+    z-index: 1000;
+    line-height: 1.4;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.2rem !important;
+    }
+    
+    header p {
+        font-size: 1.1rem !important;
+    }
+    
+    #mapa {
+        width: 95% !important;
+        height: 450px !important;
+        margin: 20px auto;
+    }
+    
+    #mapa::before {
+        font-size: 1.1rem;
+        padding: 12px 15px;
+    }
+    
+    #mapa .leaflet-container {
+        margin-top: 50px;
+        height: calc(100% - 50px);
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8rem !important;
+    }
+    
+    header p {
+        font-size: 1rem !important;
+    }
+    
+    #mapa {
+        width: 98% !important;
+        height: 400px !important;
+        margin: 15px auto;
+    }
+    
+    #mapa::before {
+        font-size: 1rem;
+        padding: 10px 12px;
+    }
+    
+    #mapa .leaflet-container {
+        margin-top: 45px;
+        height: calc(100% - 45px);
+    }
+    
+    #mapa::after {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+}
