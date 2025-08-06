@@ -36,6 +36,45 @@
 
   <div id="mapa"></div>
 
+
+ <!-- Botón Metadatos -->
+  <div style="text-align: center; margin-top: 10px;">
+    <button onclick="abrirModal()" style="padding: 10px 20px; font-size: 16px;">Mostrar Metadatos</button>
+  </div>
+
+  <!-- Modal de selección de capas -->
+  <div id="modalMetadatos" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999;">
+    <div style="background: white; width: 300px; margin: 100px auto; padding: 20px; border-radius: 10px; text-align: center; color: black;">
+      <h3>Selecciona la Capa</h3>
+      <select id="selectCapa" style="width: 100%; padding: 10px;">
+        <option value="barrios">Barrios de Cartagena</option>
+        <option value="zinfluencia">Zona de Influencia</option>
+        <option value="inmueblesd">Inmuebles Distrito</option>
+        <option value="aturisticas">Áreas Turísticas</option>
+        <option value="iglesias">Iglesias</option>
+        <option value="bibliotecas">Bibliotecas</option>
+        <option value="roads">Carreteras</option>
+        <option value="erosioncostera">Erosión Costera</option>
+        <option value="agua2020">Nivel del Mar 2020</option>
+        <option value="agua2025">Nivel del Mar 2025</option>
+        <option value="agua2040">Nivel del Mar 2040</option>
+      </select>
+      <br><br>
+      <button onclick="verMetadatosISO19115()" style="padding: 10px 20px;">Metadatos ISO 19115</button>
+      <br><br>
+      <button onclick="verMetadatosDublinCore()" style="padding: 10px 20px;">Metadatos por Lugar (Dublin Core)</button>
+      <br><br>
+      <br><br>
+      <button onclick="cerrarModal()" style="padding: 5px 10px;">Cerrar</button>
+      <br><br>
+    </div>
+  </div>
+
+  <footer style="text-align: center; margin-top: 20px; color: #00FFFF;">
+    Información: Utiliza los controles de capas para mostrar/ocultar diferentes elementos del mapa. Haz clic en el mapa para obtener más información sobre cada área.
+  </footer>
+
+
   <script>
     function getColor(d) {
       return d > 10 ? '#800026' :
@@ -237,6 +276,178 @@
     };
 
     L.control.layers(capasbase, capasadicionales).addTo(mimapa);
+	
+	
+	
+	//Funciones del boton 
+	function abrirModal() {
+      document.getElementById("modalMetadatos").style.display = "block";
+    }
+
+    function cerrarModal() {
+      document.getElementById("modalMetadatos").style.display = "none";
+    }
+	
+	
+	//Metadatos ISO 
+	function verMetadatosISO19115() {
+      var capaSeleccionada = document.getElementById("selectCapa").value;
+      var xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+      xml += '<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd"\n';
+      xml += '    xmlns:gco="http://www.isotc211.org/2005/gco"\n';
+      xml += '    xmlns:gml="http://www.opengis.net/gml">\n';
+      
+      xml += '  <gmd:fileIdentifier>\n';
+      xml += '    <gco:CharacterString>' + capaSeleccionada + '_metadata</gco:CharacterString>\n';
+      xml += '  </gmd:fileIdentifier>\n';
+
+      xml += '  <gmd:language>\n';
+      xml += '    <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/" codeListValue="spa">es</gmd:LanguageCode>\n';
+      xml += '  </gmd:language>\n';
+
+      xml += '  <gmd:hierarchyLevel>\n';
+      xml += '    <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>\n';
+      xml += '  </gmd:hierarchyLevel>\n';
+
+      xml += '  <gmd:identificationInfo>\n';
+      xml += '    <gmd:MD_DataIdentification>\n';
+      xml += '      <gmd:citation>\n';
+      xml += '        <gmd:CI_Citation>\n';
+      xml += '          <gmd:title>\n';
+      xml += '            <gco:CharacterString>' + capaSeleccionada + '</gco:CharacterString>\n';
+      xml += '          </gmd:title>\n';
+      xml += '          <gmd:date>\n';
+      xml += '            <gmd:CI_Date>\n';
+      xml += '              <gmd:date>\n';
+      xml += '                <gco:Date>' + new Date().toISOString().split("T")[0] + '</gco:Date>\n';
+      xml += '              </gmd:date>\n';
+      xml += '              <gmd:dateType>\n';
+      xml += '                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#CI_DateTypeCode" codeListValue="creation">creation</gmd:CI_DateTypeCode>\n';
+      xml += '              </gmd:dateType>\n';
+      xml += '            </gmd:CI_Date>\n';
+      xml += '          </gmd:date>\n';
+      xml += '        </gmd:CI_Citation>\n';
+      xml += '      </gmd:citation>\n';
+
+      xml += '      <gmd:abstract>\n';
+      xml += '        <gco:CharacterString>Datos espaciales de ' + capaSeleccionada + ' en Cartagena de Indias.</gco:CharacterString>\n';
+      xml += '      </gmd:abstract>\n';
+
+      xml += '      <gmd:descriptiveKeywords>\n';
+      xml += '        <gmd:MD_Keywords>\n';
+      xml += '          <gmd:keyword>\n';
+      xml += '            <gco:CharacterString>Cartagena</gco:CharacterString>\n';
+      xml += '          </gmd:keyword>\n';
+      xml += '          <gmd:keyword>\n';
+      xml += '            <gco:CharacterString>' + capaSeleccionada + '</gco:CharacterString>\n';
+      xml += '          </gmd:keyword>\n';
+      xml += '        </gmd:MD_Keywords>\n';
+      xml += '      </gmd:descriptiveKeywords>\n';
+
+      xml += '      <gmd:spatialRepresentationType>\n';
+      xml += '        <gmd:MD_SpatialRepresentationTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_SpatialRepresentationTypeCode" codeListValue="vector">vector</gmd:MD_SpatialRepresentationTypeCode>\n';
+      xml += '      </gmd:spatialRepresentationType>\n';
+
+      xml += '      <gmd:extent>\n';
+      xml += '        <gmd:EX_Extent>\n';
+      xml += '          <gmd:geographicElement>\n';
+      xml += '            <gmd:EX_GeographicBoundingBox>\n';
+      xml += '              <gmd:westBoundLongitude>\n';
+      xml += '                <gco:Decimal>-75.6</gco:Decimal>\n';
+      xml += '              </gmd:westBoundLongitude>\n';
+      xml += '              <gmd:eastBoundLongitude>\n';
+      xml += '                <gco:Decimal>-75.4</gco:Decimal>\n';
+      xml += '              </gmd:eastBoundLongitude>\n';
+      xml += '              <gmd:southBoundLatitude>\n';
+      xml += '                <gco:Decimal>10.3</gco:Decimal>\n';
+      xml += '              </gmd:southBoundLatitude>\n';
+      xml += '              <gmd:northBoundLatitude>\n';
+      xml += '                <gco:Decimal>10.5</gco:Decimal>\n';
+      xml += '              </gmd:northBoundLatitude>\n';
+      xml += '            </gmd:EX_GeographicBoundingBox>\n';
+      xml += '          </gmd:geographicElement>\n';
+      xml += '        </gmd:EX_Extent>\n';
+      xml += '      </gmd:extent>\n';
+
+      xml += '    </gmd:MD_DataIdentification>\n';
+      xml += '  </gmd:identificationInfo>\n';
+
+      xml += '  <gmd:distributionInfo>\n';
+      xml += '    <gmd:MD_Distribution>\n';
+      xml += '      <gmd:distributionFormat>\n';
+      xml += '        <gmd:MD_Format>\n';
+      xml += '          <gmd:name>\n';
+      xml += '            <gco:CharacterString>GeoJSON</gco:CharacterString>\n';
+      xml += '          </gmd:name>\n';
+      xml += '        </gmd:MD_Format>\n';
+      xml += '      </gmd:distributionFormat>\n';
+      xml += '    </gmd:MD_Distribution>\n';
+      xml += '  </gmd:distributionInfo>\n';
+
+      xml += '</gmd:MD_Metadata>\n';
+
+      var nuevaVentana = window.open();
+      nuevaVentana.document.write('<pre>' + xml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
+      nuevaVentana.document.write('<button onclick="descargarXML()">Descargar XML</button>');
+      nuevaVentana.document.write('<script>function descargarXML(){var blob = new Blob([' + JSON.stringify(xml) + '], {type: "application/xml"}); var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href = url; a.download = "metadatos_ISO19115.xml"; a.click(); URL.revokeObjectURL(url);}</' + 'script>');
+      nuevaVentana.document.close();
+      cerrarModal();
+    }
+
+
+
+	
+	//Metadatos Dublin Core
+	function verMetadatosDublinCore() {
+      var capaSeleccionada = document.getElementById("selectCapa").value;
+      var datos = [];
+      var capaObj = {
+        "barrios": capa_barrios,
+        "zinfluencia": capa_zinfluencia,
+        "inmueblesd": capa_inmueblesd,
+        "aturisticas": capa_aturisticas,
+        "iglesias": capa_iglesias,
+        "bibliotecas": capa_bibliotecas,
+        "roads": capa_roads,
+        "erosioncostera": capa_erosioncostera,
+        "agua2020": capa_agua2020,
+        "agua2025": capa_agua2025,
+        "agua2040": capa_agua2040
+      }[capaSeleccionada];
+
+      if (capaObj) {
+        capaObj.eachLayer(function (layer) {
+          if (layer.feature && layer.feature.properties) {
+            datos.push(layer.feature.properties);
+          }
+        });
+      }
+
+      var xml = '<?xml version="1.0" encoding="UTF-8"?>\n<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n';
+      datos.forEach(function (item, index) {
+        xml += '  <record>\n';
+        xml += '    <dc:title>' + (item.nombre || item.Zona_Inf || item.descripcion || "Feature " + (index + 1)) + '</dc:title>\n';
+        xml += '    <dc:description>' + (item.descripcion || "Sin descripción") + '</dc:description>\n';
+        xml += '    <dc:subject>' + capaSeleccionada + '</dc:subject>\n';
+        xml += '    <dc:identifier>' + (item.ID || index + 1) + '</dc:identifier>\n';
+        xml += '    <dc:type>Dataset</dc:type>\n';
+        xml += '    <dc:format>application/geo+json</dc:format>\n';
+        xml += '    <dc:language>es</dc:language>\n';
+        xml += '  </record>\n';
+      });
+      xml += '</metadata>';
+
+      var nuevaVentana = window.open();
+      nuevaVentana.document.write('<pre>' + xml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
+      nuevaVentana.document.write('<button onclick="descargarXML()">Descargar XML</button>');
+      nuevaVentana.document.write('<script>function descargarXML(){var blob = new Blob([' + JSON.stringify(xml) + '], {type: "application/xml"}); var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href = url; a.download = "metadatos_dublin_core.xml"; a.click(); URL.revokeObjectURL(url);}</' + 'script>');
+      nuevaVentana.document.close();
+      cerrarModal();
+    }
+
+	
+	
+	
   </script>
 </body>
 </html>
