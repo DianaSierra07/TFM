@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Visualizador - IDE Patrimonial Cartagena de Indias</title>
+   
+    <!-- Leaflet CSS y JS - EXACTAMENTE como en el original -->
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="cartagena-styles.css" />
+   
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       
+        body {
+            background-color: #0d2257;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 80px; /* Espacio para el header fijo */
+        }
+       
+        /* Header principal con navegación */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, rgba(13, 34, 87, 0.95) 0%, rgba(26, 59, 122, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #00BFFF;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+        }
+       
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 70px;
+        }
+       
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #00BFFF;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+       
+        .logo:hover {
+            color: #00FFFF;
+        }
+       
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+       
+        .nav-item {
+            position: relative;
+        }
+       
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+       
+        .nav-link:hover {
+            color: #00BFFF;
+            background: rgba(0, 191, 255, 0.1);
+            transform: translateY(-1px);
+        }
+       
+        .nav-link.active {
+            color: #00BFFF;
+            background: rgba(0, 191, 255, 0.15);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+        }
+       
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+       
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+       
+        /* Contenedor del mapa */
+        .map-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #0d2257; /* Cambia el fondo blanco por azul */
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+       
+        #mapa {
+            width: 100%;
+            height: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 191, 255, 0.3);
+            position: relative;
+        }
+
+
+        /* NUEVAS FUNCIONALIDADES - Estilos agregados */
+        .coordinates-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(13, 34, 87, 0.9);
+            color: #00BFFF;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 11px;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+
+        .new-tools-panel {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            background: rgba(13, 34, 87, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            z-index: 1000;
+        }
+
+
+        .tool-btn {
+            display: block;
+            background: #00BFFF;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin: 2px 0;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            width: 120px;
+        }
+
+
+        .tool-btn:hover {
+            background: #0099CC;
+        }
+
+
+        .tool-btn.active {
+            background: #FF6B6B;
+        }
+
+
+        .search-panel-new {
+            background: rgba(13, 34, 87, 0.9);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+        }
+
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+
+        .search-input {
+            padding: 5px 8px;
+            border: 1px solid #00BFFF;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 12px;
+        }
+
+
+        .search-select {
+            padding: 5px 8px;
+            border: 1px solid #00BFFF;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgb(94, 93, 93);
+            font-size: 12px;
+        }
+
+
+        .search-btn {
+            padding: 5px 10px;
+            background: #00BFFF;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+
+        .search-results {
+            max-height: 150px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 3px;
+            margin-top: 10px;
+            display: none;
+        }
+
+
+        .result-item {
+            padding: 8px;
+            border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+
+        .result-item:hover {
+            background: rgba(0, 191, 255, 0.2);
+        }
+
+
+        .measure-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(13, 34, 87, 0.9);
+            color: #00BFFF;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            z-index: 1000;
+            display: none;
+        }
+       
+        /* Botón de metadatos */
+        .metadata-button {
+            text-align: center;
+            margin: 2rem 0;
+        }
+       
+        .metadata-button button {
+            background: linear-gradient(135deg, #00BFFF 0%, #0099CC 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+        }
+       
+        .metadata-button button:hover {
+            background: linear-gradient(135deg, #0099CC 0%, #007ACC 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.4);
+        }
+       
+        /* Footer mejorado */
+        footer {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            color: rgba(0, 255, 255, 0.8);
+            font-size: 14px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+       
+        /* Modal de metadatos mejorado */
+        #modalMetadatos {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+       
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            width: 90%;
+            max-width: 400px;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 191, 255, 0.3);
+        }
+       
+        .modal-content h3 {
+            color: #0d2257;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+       
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 1rem;
+            background: white;
+        }
+       
+        .modal-content button {
+            background: linear-gradient(135deg, #00BFFF 0%, #0099CC 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+       
+        .modal-content button:hover {
+            background: linear-gradient(135deg, #0099CC 0%, #007ACC 100%);
+            transform: translateY(-1px);
+        }
+       
+        .modal-content .close-button {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            margin-top: 1rem;
+        }
+       
+        .modal-content .close-button:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+        }
+       
+        /* Responsive para móviles */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+           
+            header nav {
+                padding: 0.8rem 1rem;
+                height: 60px;
+            }
+           
+            .logo {
+                font-size: 1.2rem;
+            }
+           
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 60px;
+                flex-direction: column;
+                background: linear-gradient(135deg, rgba(13, 34, 87, 0.98) 0%, rgba(26, 59, 122, 0.98) 100%);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                padding: 2rem 0;
+                gap: 1rem;
+                backdrop-filter: blur(10px);
+                border-bottom: 2px solid #00BFFF;
+            }
+           
+            .nav-menu.active {
+                left: 0;
+            }
+           
+            .hamburger {
+                display: flex;
+            }
+           
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+           
+            .hamburger.active span:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+           
+            .hamburger.active span:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
+            }
+           
+            .map-container {
+                padding: 1rem;
+            }
+           
+            #mapa {
+                height: 400px;
+            }
+           
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+                padding: 1.5rem;
+            }
+        }
+       
+        @media (max-width: 480px) {
+            .nav-menu {
+                gap: 0.5rem;
+                padding: 1.5rem 0;
+            }
+           
+            .nav-link {
+                padding: 0.8rem 1.5rem;
+                width: 80%;
+                margin: 0 auto;
+            }
+           
+            #mapa {
+                height: 350px;
+            }
+        }
+    </style>
+
+
+    <!-- Archivos GeoJSON - EXACTAMENTE como en el original -->
+    <script src="cartagena_barrios.js"></script>
+    <script src="cartagena_zinfluencia.js"></script>
+    <script src="cartagena_inmueblesd.js"></script>
+    <script src="cartagena_aturisticas.js"></script>
+    <!-- <script src="cartagena_zonadesgaste.js"></script>-->
+    <script src="cartagena_bibliotecas.js"></script>
+    <script src="cartagena_iglesias.js"></script>
+    <script src="cartagena_roads.js"></script>
+    <script src="cartagena_erosioncostera.js"></script>
+    <script src="agua_2020.js"></script>
+    <script src="agua_2025.js"></script>
+    <script src="agua_2040.js"></script>
+
+
+    <!-- Librería para mapa de calor (OBLIGATORIA) -->
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+</head>
+
+
+<body>
+    <!-- Header con navegación -->
+    <header>
+        <nav>
+            <a href="index.html" class="logo">🗺️ IDE Patrimonial Cartagena de Indias</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">INICIO</a></li>
+                <li class="nav-item"><a href="visualizador.html" class="nav-link active">VISUALIZADOR</a></li>
+                <li class="nav-item"><a href="catalogo.html" class="nav-link">CATÁLOGO</a></li>
+                <li class="nav-item"><a href="servicios.html" class="nav-link">SERVICIOS</a></li>
+                <li class="nav-item"><a href="info.html" class="nav-link">ACERCA DE MÍ</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- Contenedor principal del mapa -->
+    <div class="map-container">
+       
+        <!-- NUEVO: Panel de búsqueda compacto -->
+        <div class="search-panel-new">
+            <div style="color: #00BFFF; font-weight: bold; margin-bottom: 8px;">🔍 Búsqueda</div>
+            <div class="search-row">
+                    <select id="layerSelect" class="search-select" style="width: 150px;">
+                        <option value="">Seleccionar capa...</option>
+                        <option value="barrios">Barrios</option>
+                        <option value="zinfluencia">Zona Influencia</option>
+                        <option value="inmueblesd">Inmuebles</option>
+                        <option value="aturisticas">Turismo</option>
+                        <option value="iglesias">Iglesias</option>
+                        <option value="bibliotecas">Bibliotecas</option>
+                        <option value="roads">Carreteras</option>
+                        <option value="erosioncostera">Erosión Costera</option>
+                        <option value="agua2020">Nivel del Mar 2020</option>
+                        <option value="agua2025">Nivel del Mar 2025</option>
+                        <option value="agua2040">Nivel del Mar 2040</option>
+                        <option value="zonadesgaste">Zona Desgaste</option>
+                    </select>
+                <input type="text" id="layerSearchText" class="search-input" placeholder="Buscar en capa..." style="width: 120px;">
+                <button onclick="searchLayer()" class="search-btn">Buscar Capa</button>
+            </div>
+            <div class="search-row">
+                <input type="text" id="globalSearchText" class="search-input" placeholder="Buscar cualquier lugar..." style="width: 200px;">
+                <button onclick="searchGlobal()" class="search-btn">Buscar Global</button>
+                <button onclick="clearAllSearch()" class="search-btn" style="background: #666;">Limpiar</button>
+            </div>
+            <div id="searchResultsDiv" class="search-results"></div>
+        </div>
+
+
+        <!-- Mapa - EXACTAMENTE como en el original con elementos superpuestos -->
+        <div style="position: relative;">
+            <div id="mapa"></div>
+           
+            <!-- NUEVO: Panel de coordenadas -->
+        <div id="coordsDisplay" class="coordinates-display" style="top: auto; bottom: 10px; right: 10px; left: auto;">
+            <div>📍 Lat: <span id="latDisplay">-</span></div>
+            <div>📍 Lng: <span id="lngDisplay">-</span></div>
+        </div>
+           
+            <!-- NUEVO: Panel de herramientas -->
+            <div class="new-tools-panel">
+                <div style="color: #00BFFF; font-size: 11px; font-weight: bold; margin-bottom: 5px;">🛠️ Herramientas</div>
+                <button id="measureToggle" class="tool-btn" onclick="toggleMeasureTool()">📏 Medir Distancia</button>
+                <button class="tool-btn" onclick="clearMeasures()">🗑️ Limpiar Medidas</button>
+            </div>
+           
+            <!-- NUEVO: Info de medición -->
+            <div id="measureDisplay" class="measure-info">
+                <div id="measureText">Haz clic en dos puntos</div>
+            </div>
+        </div>
+
+
+        <!-- Botón para abrir el modal - EXACTAMENTE como en el original -->
+        <div class="metadata-button">
+            <button onclick="abrirModal()">Mostrar Metadatos</button>
+        </div>
+    </div>
+
+
+    <!-- Modal de selección de capas - EXACTAMENTE como en el original -->
+    <div id="modalMetadatos">
+        <div class="modal-content">
+            <h3>Selecciona la Capa</h3>
+            <select id="selectCapa">
+                <option value="barrios">Barrios de Cartagena</option>
+                <option value="zinfluencia">Zona de Influencia</option>
+                <option value="inmueblesd">Inmuebles Distrito</option>
+                <option value="aturisticas">Áreas Turísticas</option>
+                <option value="zonadesgaste">Zona Desgaste</option>
+                <option value="iglesias">Iglesias</option>
+                <option value="bibliotecas">Bibliotecas</option>
+                <option value="roads">Carreteras</option>
+                <option value="erosioncostera">Erosión Costera</option>
+                <option value="agua2020">Nivel del Mar 2020</option>
+                <option value="agua2025">Nivel del Mar 2025</option>
+                <option value="agua2040">Nivel del Mar 2040</option>
+            </select>
+            <br><br>
+            <button onclick="verMetadatosISO19115()">Metadatos ISO 19115</button>
+            <br><br>
+            <button onclick="verMetadatosDublinCore()">Metadatos por Lugar (Dublin Core)</button>
+            <br><br>
+            <button onclick="cerrarModal()" class="close-button">Cerrar</button>
+        </div>
+    </div>
+
+
+    <!-- Footer - EXACTAMENTE como en el original -->
+    <footer>
+        <strong>Información:</strong> Utiliza los controles de capas para mostrar/ocultar diferentes elementos del mapa. Haz clic en el mapa para obtener más información sobre cada área.
+    </footer>
+
+
+    <script>
+        // Variables para nuevas funcionalidades
+   
+       
+        // Funcionalidad del menú móvil - EXACTAMENTE como en el original
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+           
+            if (hamburger && navMenu) {
+                hamburger.addEventListener('click', function() {
+                    hamburger.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+
+
+                // Cerrar menú móvil al hacer clic en un enlace
+                document.querySelectorAll('.nav-link').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    });
+                });
+
+
+                // Cerrar menú móvil al hacer clic fuera
+                document.addEventListener('click', function(e) {
+                    if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    }
+                });
+            }
+        });
+
+
+        // TODO EL CÓDIGO JAVASCRIPT DEL MAPA ORIGINAL - SIN MODIFICACIONES
+        function getColor(d) {
+            return d > 10 ? '#800026' :
+                   d > 5 ? '#BD0026' :
+                   d > 3 ? '#E31A1C' :
+                   d > 2 ? '#FC4E2A' :
+                   d > 1 ? '#FD8D3C' :
+                   d > 0.5 ? '#FEB24C' :
+                   d > 0.25 ? '#FED976' :
+                              '#FFEDA0';
+        }
+
+
+        function style(feature) {
+            return {
+                fillColor: getColor(feature.properties.ID || 1),
+                weight: 2,
+                opacity: 1,
+                color: 'black',
+                fillOpacity: 0.8
+            };
+        }
+
+
+        function roadStyle(feature) {
+            return { color: '#000000', weight: 1, opacity: 1 };
+        }
+
+
+        var osmMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> Contributors'
+        });
+        var GoogleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            attribution: '&copy; <a href="http://www.google.com/maps">Google Maps</a> Contributors'
+        });
+
+
+        var GoogleSatellite = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            attribution: '&copy; <a href="http://www.google.cn/maps">Google Maps</a> Contributors'
+        });
+
+
+        var mimapa = L.map('mapa', {
+            measureControl: true,
+            maxZoom: 20,
+            center: [10.3910, -75.4794],
+            zoom: 13
+        });
+
+
+        osmMap.addTo(mimapa);
+
+
+        // Iconos personalizados
+        var iconoIglesia = L.icon({ iconUrl: 'iglesia.png', iconSize: [15, 15] });
+        var iconoInmueble = L.icon({ iconUrl: 'inmuebles.png', iconSize: [15, 15] });
+        var iconoLibro = L.icon({ iconUrl: 'libro.png', iconSize: [15, 15] });
+        var iconoTurismo = L.icon({ iconUrl: 'pturistico.png', iconSize: [15, 15] });
+
+
+        // Capas GeoJSON - EXACTAMENTE como en el original
+        var capa_barrios = L.geoJson(cartagena_barrios, { style: style }).addTo(mimapa);
+        var capa_zinfluencia = L.geoJson(cartagena_zinfluencia, {
+            style: style,
+            onEachFeature: function (feature, layer) {
+                var zona = feature.properties.Zona_Inf || "No disponible";
+                layer.bindPopup("<b>Zona de Influencia:</b> " + zona);
+            }
+        }).addTo(mimapa);
+
+
+        var capa_aturisticas = L.geoJson(cartagena_aturisticas, {
+            pointToLayer: function (feature, latlng) { return L.marker(latlng, { icon: iconoTurismo }); },
+            onEachFeature: function (feature, layer) {
+                var nombre = feature.properties.nombre || "Sitio Turístico";
+                layer.bindPopup('<b>' + nombre + '</b>');
+            }
+        }).addTo(mimapa);
+       
+        // Librería para el mapa de calor
+        var capasadicionales = {};
+        // Extraer coordenadas de Áreas Turísticas
+        var puntosTuristicos = cartagena_aturisticas.features.map(function(feature) {
+            return [
+                feature.geometry.coordinates[1], // lat
+                feature.geometry.coordinates[0]  // lng
+            ];
+        });
+
+
+        // Crear capa de calor "Zona Desgaste"
+        var capa_zona_desgaste = L.heatLayer(puntosTuristicos, {
+            radius: 25,
+            blur: 15,
+            maxZoom: 17,
+            gradient: {
+                0.2: 'blue',
+                0.4: 'lime',
+                0.6: 'yellow',
+                0.8: 'orange',
+                1.0: 'red'
+            }
+        });
+
+
+        // Agregar capa al control de capas opcionales
+        capasadicionales["Zona Desgaste"] = capa_zona_desgaste;
+
+
+        var capa_inmueblesd = L.geoJson(cartagena_inmueblesd, {
+            pointToLayer: function (feature, latlng) { return L.marker(latlng, { icon: iconoInmueble }); },
+            onEachFeature: function (feature, layer) {
+                var nombre = feature.properties.nombre || "Inmueble";
+                layer.bindPopup('<b>' + nombre + '</b>');
+            }
+        }).addTo(mimapa);
+
+
+        var capa_bibliotecas = L.geoJson(cartagena_bibliotecas, {
+            pointToLayer: function (feature, latlng) { return L.marker(latlng, { icon: iconoLibro }); },
+            onEachFeature: function (feature, layer) {
+                var nombre = feature.properties.nombre || "Biblioteca";
+                layer.bindPopup('<b>' + nombre + '</b>');
+            }
+        }).addTo(mimapa);
+
+
+        var capa_iglesias = L.geoJson(cartagena_iglesias, {
+            pointToLayer: function (feature, latlng) { return L.marker(latlng, { icon: iconoIglesia }); },
+            onEachFeature: function (feature, layer) {
+                var nombre = feature.properties.nombre || "Iglesia";
+                layer.bindPopup('<b>' + nombre + '</b>');
+            }
+        }).addTo(mimapa);
+
+
+        var capa_roads = L.geoJson(cartagena_roads, { style: roadStyle }).addTo(mimapa);
+
+
+        var capa_agua2020 = L.geoJson(agua_2020, {
+            style: { color: '#006A89', weight: 4, dashArray: '4,4' },
+            onEachFeature: function (feature, layer) {
+                var desc = feature.properties.descripcion || "Ascenso Mar 2020";
+                layer.bindPopup('<b>Capa Agua 2020:</b> ' + desc);
+            }
+        }).addTo(mimapa);
+
+
+        var capa_agua2025 = L.geoJson(agua_2025, {
+            style: { color: '#006A89', weight: 4, dashArray: '4,4' },
+            onEachFeature: function (feature, layer) {
+                var desc = feature.properties.descripcion || "Ascenso Mar 2025";
+                layer.bindPopup('<b>Capa Agua 2025:</b> ' + desc);
+            }
+        }).addTo(mimapa);
+
+
+        var capa_agua2040 = L.geoJson(agua_2040, {
+            style: { color: '#006A89', weight: 4, dashArray: '4,4' },
+            onEachFeature: function (feature, layer) {
+                var desc = feature.properties.descripcion || "Ascenso Mar 2040";
+                layer.bindPopup('<b>Capa Agua 2040:</b> ' + desc);
+            }
+        }).addTo(mimapa);
+
+
+        var capa_erosioncostera = L.geoJson(cartagena_erosioncostera, {
+            style: { color: '#006A89', weight: 4, dashArray: '4,4' },
+            onEachFeature: function (feature, layer) {
+                var desc = feature.properties.descripcion || "Área con erosión costera";
+                layer.bindPopup('<b>Erosión Costera:</b> ' + desc);
+            }
+        }).addTo(mimapa);
+
+
+       var capasbase = {
+            "Mapa OpenStreetMap": osmMap,
+            "Google Hybrid": GoogleHybrid,
+            "Google Satellite": GoogleSatellite
+            // Añade más si quieres
+        };
+        var capasadicionales = {
+            "Barrios de Cartagena": capa_barrios,
+            "Zona de Influencia": capa_zinfluencia,
+            "Inmuebles Distrito": capa_inmueblesd,
+            "Áreas Turísticas": capa_aturisticas,
+            "Zona Desgaste": capa_zona_desgaste,
+            "Iglesias": capa_iglesias,
+            "Bibliotecas": capa_bibliotecas,
+            "Carreteras": capa_roads,
+            "Erosión Costera": capa_erosioncostera,
+            "Nivel del Mar 2020": capa_agua2020,
+            "Nivel del Mar 2025": capa_agua2025,
+            "Nivel del Mar 2040": capa_agua2040
+        };
+        L.control.layers(capasbase, capasadicionales).addTo(mimapa);
+
+
+
+
+        let measuring = false;
+        let measurePts = [];
+        let measureLineLayer = null;
+        let measureMarkersList = [];
+        let searchMarkersArray = [];
+
+
+            // Mostrar coordenadas en el panel abajo a la izquierda
+    mimapa.on('mousemove', function(e) {
+        document.getElementById('latDisplay').textContent = e.latlng.lat.toFixed(6);
+        document.getElementById('lngDisplay').textContent = e.latlng.lng.toFixed(6);
+    });
+
+
+// Medir distancia entre dos puntos
+function toggleMeasureTool() {
+    measuring = !measuring;
+    document.getElementById('measureToggle').classList.toggle('active', measuring);
+    document.getElementById('measureDisplay').style.display = measuring ? 'block' : 'none';
+    clearMeasures();
+    if (measuring) {
+        document.getElementById('measureText').textContent = 'Haz clic en dos puntos';
+    }
+}
+
+
+function clearMeasures() {
+    measurePts = [];
+    if (measureLineLayer) {
+        mimapa.removeLayer(measureLineLayer);
+        measureLineLayer = null;
+    }
+    measureMarkersList.forEach(function(m) { mimapa.removeLayer(m); });
+    measureMarkersList = [];
+    document.getElementById('measureText').textContent = 'Haz clic en dos puntos';
+}
+
+
+mimapa.on('click', function(e) {
+    if (!measuring) return;
+    measurePts.push([e.latlng.lat, e.latlng.lng]);
+    var marker = L.marker(e.latlng, { draggable: false }).addTo(mimapa);
+    measureMarkersList.push(marker);
+
+
+    if (measurePts.length === 2) {
+        var latlngs = [L.latLng(measurePts[0][0], measurePts[0][1]), L.latLng(measurePts[1][0], measurePts[1][1])];
+        measureLineLayer = L.polyline(latlngs, { color: '#FF6B6B', weight: 3 }).addTo(mimapa);
+        var distancia = mimapa.distance(latlngs[0], latlngs[1]);
+        document.getElementById('measureText').textContent = 'Distancia: ' + distancia.toFixed(2) + ' m';
+    }
+});
+
+
+    // Buscador de capa y global
+function searchLayer() {
+    var capa = document.getElementById('layerSelect').value;
+    var texto = document.getElementById('layerSearchText').value.trim().toLowerCase();
+    var capaObj = {
+        "barrios": capa_barrios,
+        "zinfluencia": capa_zinfluencia,
+        "inmueblesd": capa_inmueblesd,
+        "aturisticas": capa_aturisticas,
+        "iglesias": capa_iglesias,
+        "bibliotecas": capa_bibliotecas,
+        "roads": capa_roads,
+        "erosioncostera": capa_erosioncostera,
+        "agua2020": capa_agua2020,
+        "agua2025": capa_agua2025,
+        "agua2040": capa_agua2040,
+        "zonadesgaste": capa_zona_desgaste
+    }[capa];
+
+
+    // Oculta todas las capas
+    [capa_barrios, capa_zinfluencia, capa_inmueblesd, capa_aturisticas, capa_iglesias, capa_bibliotecas].forEach(function(capaX) {
+        if (mimapa.hasLayer(capaX)) mimapa.removeLayer(capaX);
+    });
+
+
+    // Muestra solo la capa buscada
+    if (capaObj) mimapa.addLayer(capaObj);
+
+
+    // Opcional: centra el mapa en el primer resultado encontrado
+    if (capaObj && texto) {
+        capaObj.eachLayer(function(layer) {
+            var props = layer.feature && layer.feature.properties;
+            if (props) {
+                var nombre = (props.nombre || props.Zona_Inf || props.descripcion || '').toLowerCase();
+                if (nombre.includes(texto)) {
+                    if (layer.getLatLng) {
+                        mimapa.setView(layer.getLatLng(), 16);
+                    }
+                    if (layer.openPopup) layer.openPopup();
+                    return false; // solo el primero
+                }
+            }
+        });
+    }
+}
+
+
+    function searchGlobal() {
+        var texto = document.getElementById('globalSearchText').value.trim().toLowerCase();
+        var capas = [capa_barrios, capa_zinfluencia, capa_inmueblesd, capa_aturisticas, capa_iglesias, capa_bibliotecas];
+        var resultados = [];
+        if (texto) {
+            capas.forEach(function(capaObj) {
+                capaObj.eachLayer(function(layer) {
+                    var props = layer.feature && layer.feature.properties;
+                    if (props) {
+                        var nombre = (props.nombre || props.Zona_Inf || props.descripcion || '').toLowerCase();
+                        if (nombre.includes(texto)) {
+                            resultados.push({ nombre: nombre, layer: layer, latlng: layer.getLatLng ? layer.getLatLng() : null });
+                        }
+                    }
+                });
+            });
+        }
+        mostrarResultados(resultados);
+    }
+
+
+    function mostrarResultados(resultados) {
+        var div = document.getElementById('searchResultsDiv');
+        div.innerHTML = '';
+        searchMarkersArray.forEach(function(m) { mimapa.removeLayer(m); });
+        searchMarkersArray = [];
+        if (resultados.length === 0) {
+            div.style.display = 'none';
+            return;
+        }
+        resultados.forEach(function(res, idx) {
+            var item = document.createElement('div');
+            item.className = 'result-item';
+            item.textContent = res.nombre;
+            item.onclick = function() {
+                if (res.latlng) {
+                    mimapa.setView(res.latlng, 16);
+                    var marker = L.marker(res.latlng).addTo(mimapa);
+                    searchMarkersArray.push(marker);
+                }
+                if (res.layer && res.layer.openPopup) res.layer.openPopup();
+            };
+            div.appendChild(item);
+        });
+        div.style.display = 'block';
+    }
+
+
+    function clearAllSearch() {
+        document.getElementById('layerSearchText').value = '';
+        document.getElementById('globalSearchText').value = '';
+        document.getElementById('searchResultsDiv').innerHTML = '';
+        document.getElementById('searchResultsDiv').style.display = 'none';
+        searchMarkersArray.forEach(function(m) { mimapa.removeLayer(m); });
+        searchMarkersArray = [];
+    }
+   
+        function abrirModal() {
+            document.getElementById("modalMetadatos").style.display = "block";
+        }
+
+
+        function cerrarModal() {
+            document.getElementById("modalMetadatos").style.display = "none";
+        }
+
+
+        function verMetadatosISO19115() {
+            var capaSeleccionada = document.getElementById("selectCapa").value;
+            var xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            xml += '<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd"\n';
+            xml += '    xmlns:gco="http://www.isotc211.org/2005/gco"\n';
+            xml += '    xmlns:gml="http://www.opengis.net/gml">\n';
+           
+            xml += '  <gmd:fileIdentifier>\n';
+            xml += '    <gco:CharacterString>' + capaSeleccionada + '_metadata</gco:CharacterString>\n';
+            xml += '  </gmd:fileIdentifier>\n';
+
+
+            xml += '  <gmd:language>\n';
+            xml += '    <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/" codeListValue="spa">es</gmd:LanguageCode>\n';
+            xml += '  </gmd:language>\n';
+
+
+            xml += '  <gmd:hierarchyLevel>\n';
+            xml += '    <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>\n';
+            xml += '  </gmd:hierarchyLevel>\n';
+
+
+            xml += '  <gmd:identificationInfo>\n';
+            xml += '    <gmd:MD_DataIdentification>\n';
+            xml += '      <gmd:citation>\n';
+            xml += '        <gmd:CI_Citation>\n';
+            xml += '          <gmd:title>\n';
+            xml += '            <gco:CharacterString>' + capaSeleccionada + '</gco:CharacterString>\n';
+            xml += '          </gmd:title>\n';
+            xml += '          <gmd:date>\n';
+            xml += '            <gmd:CI_Date>\n';
+            xml += '              <gmd:date>\n';
+            xml += '                <gco:Date>' + new Date().toISOString().split("T")[0] + '</gco:Date>\n';
+            xml += '              </gmd:date>\n';
+            xml += '              <gmd:dateType>\n';
+            xml += '                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#CI_DateTypeCode" codeListValue="creation">creation</gmd:CI_DateTypeCode>\n';
+            xml += '              </gmd:dateType>\n';
+            xml += '            </gmd:CI_Date>\n';
+            xml += '          </gmd:date>\n';
+            xml += '        </gmd:CI_Citation>\n';
+            xml += '      </gmd:citation>\n';
+
+
+            xml += '      <gmd:abstract>\n';
+            xml += '        <gco:CharacterString>Datos espaciales de ' + capaSeleccionada + ' en Cartagena de Indias.</gco:CharacterString>\n';
+            xml += '      </gmd:abstract>\n';
+
+
+            xml += '      <gmd:descriptiveKeywords>\n';
+            xml += '        <gmd:MD_Keywords>\n';
+            xml += '          <gmd:keyword>\n';
+            xml += '            <gco:CharacterString>Cartagena</gco:CharacterString>\n';
+            xml += '          </gmd:keyword>\n';
+            xml += '          <gmd:keyword>\n';
+            xml += '            <gco:CharacterString>' + capaSeleccionada + '</gco:CharacterString>\n';
+            xml += '          </gmd:keyword>\n';
+            xml += '        </gmd:MD_Keywords>\n';
+            xml += '      </gmd:descriptiveKeywords>\n';
+
+
+            xml += '      <gmd:spatialRepresentationType>\n';
+            xml += '        <gmd:MD_SpatialRepresentationTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_SpatialRepresentationTypeCode" codeListValue="vector">vector</gmd:MD_SpatialRepresentationTypeCode>\n';
+            xml += '      </gmd:spatialRepresentationType>\n';
+
+
+            xml += '      <gmd:extent>\n';
+            xml += '        <gmd:EX_Extent>\n';
+            xml += '          <gmd:geographicElement>\n';
+            xml += '            <gmd:EX_GeographicBoundingBox>\n';
+            xml += '              <gmd:westBoundLongitude>\n';
+            xml += '                <gco:Decimal>-75.6</gco:Decimal>\n';
+            xml += '              </gmd:westBoundLongitude>\n';
+            xml += '              <gmd:eastBoundLongitude>\n';
+            xml += '                <gco:Decimal>-75.4</gco:Decimal>\n';
+            xml += '              </gmd:eastBoundLongitude>\n';
+            xml += '              <gmd:southBoundLatitude>\n';
+            xml += '                <gco:Decimal>10.3</gco:Decimal>\n';
+            xml += '              </gmd:southBoundLatitude>\n';
+            xml += '              <gmd:northBoundLatitude>\n';
+            xml += '                <gco:Decimal>10.5</gco:Decimal>\n';
+            xml += '              </gmd:northBoundLatitude>\n';
+            xml += '            </gmd:EX_GeographicBoundingBox>\n';
+            xml += '          </gmd:geographicElement>\n';
+            xml += '        </gmd:EX_Extent>\n';
+            xml += '      </gmd:extent>\n';
+
+
+            xml +=
+
+
+            xml += '    </gmd:MD_DataIdentification>\n';
+            xml += '  </gmd:identificationInfo>\n';
+
+
+            xml += '  <gmd:distributionInfo>\n';
+            xml += '    <gmd:MD_Distribution>\n';
+            xml += '      <gmd:distributionFormat>\n';
+            xml += '        <gmd:MD_Format>\n';
+            xml += '          <gmd:name>\n';
+            xml += '            <gco:CharacterString>GeoJSON</gco:CharacterString>\n';
+            xml += '          </gmd:name>\n';
+            xml += '        </gmd:MD_Format>\n';
+            xml += '      </gmd:distributionFormat>\n';
+            xml += '    </gmd:MD_Distribution>\n';
+            xml += '  </gmd:distributionInfo>\n';
+
+
+            xml += '</gmd:MD_Metadata>\n';
+
+
+            var nuevaVentana = window.open();
+            nuevaVentana.document.write('<pre>' + xml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
+            nuevaVentana.document.write('<button onclick="descargarXML()">Descargar XML</button>');
+            nuevaVentana.document.write('<script>function descargarXML(){var blob = new Blob([' + JSON.stringify(xml) + '], {type: "application/xml"}); var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href = url; a.download = "metadatos_ISO19115.xml"; a.click(); URL.revokeObjectURL(url);}</' + 'script>');
+            nuevaVentana.document.close();
+            cerrarModal();
+        }
+
+
+        function verMetadatosDublinCore() {
+            var capaSeleccionada = document.getElementById("selectCapa").value;
+            var datos = [];
+            var capaObj = {
+                "barrios": capa_barrios,
+                "zinfluencia": capa_zinfluencia,
+                "inmueblesd": capa_inmueblesd,
+                "aturisticas": capa_aturisticas,
+                "zonadesgaste": capa_zona_desgaste,
+                "iglesias": capa_iglesias,
+                "bibliotecas": capa_bibliotecas,
+                "roads": capa_roads,
+                "erosioncostera": capa_erosioncostera,
+                "agua2020": capa_agua2020,
+                "agua2025": capa_agua2025,
+                "agua2040": capa_agua2040
+            }[capaSeleccionada];
+
+
+            if (capaObj) {
+                capaObj.eachLayer(function (layer) {
+                    if (layer.feature && layer.feature.properties) {
+                        datos.push(layer.feature.properties);
+                    }
+                });
+            }
+
+
+            var xml = '<?xml version="1.0" encoding="UTF-8"?>\n<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n';
+            datos.forEach(function (item, index) {
+                xml += '  <record>\n';
+                xml += '    <dc:title>' + (item.nombre || item.Zona_Inf || item.descripcion || "Feature " + (index + 1)) + '</dc:title>\n';
+                xml += '    <dc:description>' + (item.descripcion || "Sin descripción") + '</dc:description>\n';
+                xml += '    <dc:subject>' + capaSeleccionada + '</dc:subject>\n';
+                xml += '    <dc:identifier>' + (item.ID || index + 1) + '</dc:identifier>\n';
+                xml += '    <dc:type>Dataset</dc:type>\n';
+                xml += '    <dc:format>application/geo+json</dc:format>\n';
+                xml += '    <dc:language>es</dc:language>\n';
+                xml += '  </record>\n';
+            });
+            xml += '</metadata>';
+
+
+            var nuevaVentana = window.open();
+            nuevaVentana.document.write('<pre>' + xml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
+            nuevaVentana.document.write('<button onclick="descargarXML()">Descargar XML</button>');
+            nuevaVentana.document.write('<script>function descargarXML(){var blob = new Blob([' + JSON.stringify(xml) + '], {type: "application/xml"}); var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href = url; a.download = "metadatos_dublin_core.xml"; a.click(); URL.revokeObjectURL(url);}</' + 'script>');
+            nuevaVentana.document.close();
+            cerrarModal();
+        }
+    </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acerca de Mí - Diana L. Sierra E.</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            color: #5a6c7d;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+
+        .nav-brand::before {
+            content: "🏛️";
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+
+        .hero-section {
+            background: linear-gradient(rgba(90, 108, 125, 0.8), rgba(90, 108, 125, 0.8)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300"><path fill="%23c3a882" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,186.7C960,192,1056,160,1152,138.7C1248,117,1344,107,1392,101.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg>');
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: white;
+        }
+
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+
+        .card-title {
+            color: #5a6c7d;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+
+        .card-content {
+            color: #666;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+
+        .skills-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+
+        .skills-title {
+            color: #5a6c7d;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+
+        .skill-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+
+        .skill-item:hover {
+            transform: scale(1.05);
+        }
+
+
+        .skill-item:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+
+        .skill-item:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+
+        .skill-item:nth-child(4) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+
+        .contact-section {
+            background: linear-gradient(135deg, #5a6c7d 0%, #8b9dc3 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+
+        .contact-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+
+        .contact-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+
+        .contact-text {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+
+            .contact-info {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+
+            .main-container {
+                padding: 1rem;
+            }
+        }
+
+
+        .back-button {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-bottom: 2rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-brand">IDE Patrimonial Cartagena de Indias</div>
+    </header>
+
+
+    <div class="main-container">
+        <a href="index.html" class="back-button">← Volver al Inicio</a>
+       
+        <section class="hero-section">
+            <div class="profile-image">👩‍💻</div>
+            <h1 class="hero-title">Diana L. Sierra E.</h1>
+            <p class="hero-subtitle">
+                Especialista en Sistemas de Información Geográfica y Análisis Geoespacial,
+                dedicada al desarrollo de herramientas innovadoras para la comprensión territorial
+                de Cartagena de Indias, Colombia.
+            </p>
+        </section>
+
+
+        <div class="content-grid">
+            <div class="content-card">
+                <span class="card-icon">🎓</span>
+                <h2 class="card-title">Formación Académica</h2>
+                <div class="card-content">
+                    <p>Mi formación se centra en la geografía digital y el análisis espacial, con especialización en Sistemas de Información Geográfica (SIG). He desarrollado expertise en cartografía digital y visualización de datos geoespaciales, enfocándome particularmente en el patrimonio cultural y urbano de Cartagena de Indias.</p>
+                </div>
+            </div>
+
+
+            <div class="content-card">
+                <span class="card-icon">💡</span>
+                <h2 class="card-title">Misión Personal</h2>
+                <div class="card-content">
+                    <p>Mi objetivo es democratizar el acceso a la información geográfica de Cartagena de Indias a través de herramientas digitales innovadoras. Creo firmemente que la tecnología puede ser un puente entre el conocimiento académico y la comunidad, facilitando la comprensión de nuestro territorio patrimonial.</p>
+                </div>
+            </div>
+
+
+            <div class="content-card">
+                <span class="card-icon">🏛️</span>
+                <h2 class="card-title">Pasión por el Patrimonio</h2>
+                <div class="card-content">
+                    <p>Cartagena de Indias no es solo mi ciudad natal, es mi laboratorio de investigación y fuente de inspiración. Cada mapa, cada visualización que creo, busca revelar las capas históricas, culturales y geográficas que hacen de esta ciudad un patrimonio único de la humanidad.</p>
+                </div>
+            </div>
+
+
+            <div class="content-card">
+                <span class="card-icon">🚀</span>
+                <h2 class="card-title">Visión de Futuro</h2>
+                <div class="card-content">
+                    <p>Visualizo un futuro donde las herramientas geoespaciales sean accesibles para todos: estudiantes, investigadores, turistas y ciudadanos. Mi trabajo contribuye a crear una plataforma integral que sirva como referencia para el estudio y preservación del patrimonio cartagenero.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <section class="skills-section">
+            <h2 class="skills-title">Competencias Técnicas</h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <h3>Sistemas de Información Geográfica (SIG)</h3>
+                    <p>Desarrollo y gestión de bases de datos espaciales</p>
+                </div>
+                <div class="skill-item">
+                    <h3>Análisis Geoespacial</h3>
+                    <p>Procesamiento avanzado de datos territoriales</p>
+                </div>
+                <div class="skill-item">
+                    <h3>Cartografía Digital</h3>
+                    <p>Creación de mapas interactivos y visualizaciones</p>
+                </div>
+                <div class="skill-item">
+                    <h3>Visualización de Datos</h3>
+                    <p>Transformación de datos complejos en información comprensible</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="contact-section">
+            <h2 class="contact-title">Información de Contacto</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div class="contact-text">diana.sierra@email.com</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <div class="contact-text">+57 XXX XXX XXXX</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-text">Cartagena de Indias, Colombia</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+

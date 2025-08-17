@@ -1,453 +1,747 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <title>Leaflet Mapa de Cartagena</title>
-  <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
-  <link rel="stylesheet" href="cartagena-styles.css" />
-  <style>
-    #mapa {
-      width: 90%;
-      height: 600px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización Geográfica de Cartagena de Indias</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Archivos GeoJSON -->
-  <script src="cartagena_barrios.js"></script>
-  <script src="cartagena_zinfluencia.js"></script>
-  <script src="cartagena_inmueblesd.js"></script>
-  <script src="cartagena_aturisticas.js"></script>
-  <script src="cartagena_bibliotecas.js"></script>
-  <script src="cartagena_iglesias.js"></script>
-  <script src="cartagena_roads.js"></script>
-  <script src="cartagena_erosioncostera.js"></script>
-  <script src="agua_2020.js"></script>
-  <script src="agua_2025.js"></script>
-  <script src="agua_2040.js"></script>
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #757f8a 0%, #74799e 100%);
+            min-height: 100vh;
+           
+        }
+
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a5568;
+            text-decoration: none;
+        }
+
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+
+        .nav-item {
+            position: relative;
+        }
+
+
+        .nav-link {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .nav-link:hover {
+            color: #c2aa8c;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+
+        .nav-link.active {
+            color: #c2aa8c;
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+
+        /* Mobile menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #4a5568;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* Hero Section */
+        .hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 5%;
+            color: white;
+            position: relative;
+            background: url('cartagena.jpeg') center/cover;
+            background-attachment: fixed;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+            position: relative;
+            z-index: 2;
+        }
+
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 15px 35px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 220, 107, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+
+
+        /* Navigation Cards */
+        .nav-cards {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 5%;
+            margin: 2rem 5% 0;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .nav-cards-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+
+        .nav-cards h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #4a5568;
+        }
+
+
+        .nav-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+
+        .nav-card {
+            background: linear-gradient(135deg, #c2aa8c 0%, #c2aa8c 100%);
+            color: white;
+            padding: 2.5rem 1.5rem;
+            border-radius: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+
+        .nav-card:hover::before {
+            left: 100%;
+        }
+
+
+        .nav-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+
+
+        .nav-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+
+        .nav-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+
+        .nav-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+
+        /* Features Section */
+        .features {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4rem 5%;
+            margin: 2rem 5% 0;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #4a5568;
+        }
+
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #4a5568;
+        }
+
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 4rem;
+        }
+
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+
+        .footer-section p, .footer-section a {
+            color: #cbd5e0;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+
+        .footer-section a:hover {
+            color: #667eea;
+        }
+
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #4a5568;
+            color: #a0aec0;
+        }
+
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* Responsive Design */
+            .carousel-track {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+
+            .carousel-item {
+                min-width: 280px;
+                flex: 1;
+                max-width: 100%;
+            }
+
+
+            .carousel-nav {
+                display: none;
+            }
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: rgba(255, 255, 255, 0.98);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 2rem 0;
+            }
+
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+
+            .hamburger {
+                display: flex;
+            }
+
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+
+            .hamburger.active span:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+
+
+            .hamburger.active span:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
+            }
+
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+
+            .features {
+                margin: 1rem 2%;
+            }
+
+
+            nav {
+                padding: 1rem 3%;
+            }
+       
+    </style>
 </head>
-
 <body>
-  <header>
-    <h1 style="font-size: 32px; color:#0000FF; text-align: center">Mapa Patrimonio Cultural Catagena de Indias</h1>
-    <p style="font-size: 20px; color:#00FFFF; text-align: center">Master Universitario en Geotecnologías Cartográficas</p>
-    <p style="font-size: 20px; color:#00FFFF; text-align: center">Diana L. Sierra E.</p>
-  </header>
-
-  <div id="mapa"></div>
-
-
- <!-- Botón Metadatos -->
-  <div style="text-align: center; margin-top: 10px;">
-    <button onclick="abrirModal()" style="padding: 10px 20px; font-size: 16px;">Mostrar Metadatos</button>
-  </div>
-
-  <!-- Modal de selección de capas -->
-  <div id="modalMetadatos" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999;">
-    <div style="background: white; width: 300px; margin: 100px auto; padding: 20px; border-radius: 10px; text-align: center; color: black;">
-      <h3>Selecciona la Capa</h3>
-      <select id="selectCapa" style="width: 100%; padding: 10px;">
-        <option value="barrios">Barrios de Cartagena</option>
-        <option value="zinfluencia">Zona de Influencia</option>
-        <option value="inmueblesd">Inmuebles Distrito</option>
-        <option value="aturisticas">Áreas Turísticas</option>
-        <option value="iglesias">Iglesias</option>
-        <option value="bibliotecas">Bibliotecas</option>
-        <option value="roads">Carreteras</option>
-        <option value="erosioncostera">Erosión Costera</option>
-        <option value="agua2020">Nivel del Mar 2020</option>
-        <option value="agua2025">Nivel del Mar 2025</option>
-        <option value="agua2040">Nivel del Mar 2040</option>
-      </select>
-      <br><br>
-      <button onclick="verMetadatosISO19115()" style="padding: 10px 20px;">Metadatos ISO 19115</button>
-      <br><br>
-      <button onclick="verMetadatosDublinCore()" style="padding: 10px 20px;">Metadatos por Lugar (Dublin Core)</button>
-      <br><br>
-      <br><br>
-      <button onclick="cerrarModal()" style="padding: 5px 10px;">Cerrar</button>
-      <br><br>
-    </div>
-  </div>
-
-  <footer style="text-align: center; margin-top: 20px; color: #00FFFF;">
-    Información: Utiliza los controles de capas para mostrar/ocultar diferentes elementos del mapa. Haz clic en el mapa para obtener más información sobre cada área.
-  </footer>
+    <header>
+        <nav>
+            <a href="#" class="logo">🗺️ IDE Patrimonial Cartagena de Indias</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link active">INICIO</a></li>
+                <li class="nav-item"><a href="visualizador.html" class="nav-link">VISUALIZADOR</a></li>
+                <li class="nav-item"><a href="catalogo.html" class="nav-link">CATÁLOGO</a></li>
+                <li class="nav-item"><a href="servicios.html" class="nav-link">SERVICIOS</a></li>
+                <li class="nav-item"><a href="info.html" class="nav-link">ACERCA DE MÍ</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
 
 
-  <script>
-    function getColor(d) {
-      return d > 10 ? '#800026' :
-             d > 5 ? '#BD0026' :
-             d > 3 ? '#E31A1C' :
-             d > 2 ? '#FC4E2A' :
-             d > 1 ? '#FD8D3C' :
-             d > 0.5 ? '#FEB24C' :
-             d > 0.25 ? '#FED976' :
-                        '#FFEDA0';
-    }
-
-    function style(feature) {
-      return {
-        fillColor: getColor(feature.properties.ID || 1),
-        weight: 2,
-        opacity: 1,
-        color: 'black',
-        fillOpacity: 0.8
-      };
-    }
-
-    function roadStyle(feature) {
-      return {
-        color: '#000000',
-        weight: 1,
-        opacity: 1
-      };
-    }
-
-    var osmMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> Contributors'
-    });
-
-    var mimapa = L.map('mapa', {
-      measureControl: true,
-      maxZoom: 20,
-      center: [10.3910, -75.4794],
-      zoom: 13
-    });
-
-    osmMap.addTo(mimapa);
+    <main>
+        <section class="hero" id="inicio">
+            <div class="hero-content">
+                <h1>Visualización Geográfica de Cartagena de Indias</h1>
+                <p>Explora la ciudad heroica a través de mapas interactivos y visualizaciones geográficas avanzadas. Descubre la historia, geografía y datos espaciales de Cartagena de Indias de una manera completamente nueva.</p>
+                <button class="cta-button" onclick="navigateToVisualizer()">Explorar Visualizador</button>
+            </div>
+        </section>
 
 
-	  
+        <section class="nav-cards">
+            <div class="nav-cards-container">
+                <h2>Explora Nuestras Secciones</h2>
+                <div class="nav-cards-grid">
+                    <a href="index.html" class="nav-card">
+                        <span class="nav-card-icon">🏠</span>
+                        <h3>INICIO</h3>
+                        <p>Página principal con información general del proyecto</p>
+                    </a>
+                    <a href="visualizador.html" class="nav-card">
+                        <span class="nav-card-icon">🗺️</span>
+                        <h3>VISUALIZADOR</h3>
+                        <p>Mapas interactivos y herramientas de visualización geográfica</p>
+                    </a>
+                    <a href="catalogo.html" class="nav-card">
+                        <span class="nav-card-icon">📚</span>
+                        <h3>CATÁLOGO</h3>
+                        <p>Biblioteca de recursos y datos geográficos disponibles</p>
+                    </a>
+                    <a href="servicios.html" class="nav-card">
+                        <span class="nav-card-icon">⚙️</span>
+                        <h3>SERVICIOS</h3>
+                        <p>Servicios profesionales de análisis geoespacial</p>
+                    </a>
+                    <a href="info.html" class="nav-card">
+                        <span class="nav-card-icon">👩‍💼</span>
+                        <h3>ACERCA DE MÍ</h3>
+                        <p>Información personal y experiencia profesional</p>
+                    </a>
+                </div>
+            </div>
+        </section>
 
 
-	// Icono iglesia
-    var iconoIglesia = L.icon({
-      iconUrl: 'iglesia.png',
-      iconSize: [15, 15],
-      iconAnchor: [15, 30],
-      popupAnchor: [0, -30]
-    });
-    // Icono inmueble 
-    var iconoInmueble = L.icon({
-      iconUrl: 'inmuebles.png',
-      iconSize: [15, 15],
-      iconAnchor: [15, 30],
-      popupAnchor: [0, -30]
-    });
-    // Icono biblioteca
-    var iconoLibro = L.icon({
-      iconUrl: 'libro.png',
-      iconSize: [15, 15],
-      iconAnchor: [15, 30],
-      popupAnchor: [0, -30]
-    });
-	
-	// Icono Turismo
-    var iconoTurismo = L.icon({
-      iconUrl: 'pturistico.png',
-      iconSize: [15, 15],
-      iconAnchor: [15, 30],
-      popupAnchor: [0, -30]
-    });
-	
-	
-	// Capas estilo e informacion
-    var capa_barrios = L.geoJson(cartagena_barrios, { style: style }).addTo(mimapa);
-
-    var capa_zinfluencia = L.geoJson(cartagena_zinfluencia, {
-      style: style,
-      onEachFeature: function (feature, layer) {
-        var zona = feature.properties.Zona_Inf || "No disponible";
-        layer.bindPopup("<b>Zona de Influencia:</b> " + zona);
-      }
-    }).addTo(mimapa);
+        <section class="features">
+            <div class="features-container">
+                <h2>Características Principales</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🗺️</div>
+                        <h3>Mapas Interactivos</h3>
+                        <p>Visualiza Cartagena con mapas detallados e interactivos que te permiten explorar cada rincón de la ciudad con precisión geográfica.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Análisis de Datos</h3>
+                        <p>Accede a análisis geoespaciales avanzados y estadísticas detalladas sobre la geografía y demografía de Cartagena.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏛️</div>
+                        <h3>Patrimonio Histórico</h3>
+                        <p>Descubre los sitios históricos y el patrimonio cultural de Cartagena a través de visualizaciones espaciales únicas.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌊</div>
+                        <h3>Geografía Costera</h3>
+                        <p>Explora la compleja geografía costera del Caribe colombiano y su impacto en el desarrollo urbano de la ciudad.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>Responsive Design</h3>
+                        <p>Accede desde cualquier dispositivo con una experiencia optimizada para móviles, tablets y escritorio.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Búsqueda Avanzada</h3>
+                        <p>Encuentra ubicaciones específicas, barrios y puntos de interés con herramientas de búsqueda geográfica avanzadas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
 
-    var capa_aturisticas = L.geoJson(cartagena_aturisticas, {
-      pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, { icon: iconoTurismo });
-      },
-      onEachFeature: function (feature, layer) {
-        var nombre = feature.properties.nombre || "Sitio Turístico";
-        layer.bindPopup('<b>' + nombre + '</b>');
-      }
-    }).addTo(mimapa);
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p><strong>Diana L. Sierra E.</strong></p>
+                <p>📧 diana.sierra@email.com</p>
+                <p>📱 +57 XXX XXX XXXX</p>
+                <p>📍 Cartagena de Indias, Colombia</p>
+            </div>
+            <div class="footer-section">
+                <h3>Proyecto</h3>
+                <p>Visualización Geográfica de Cartagena de Indias</p>
+                <p>Desarrollo de herramientas de análisis geoespacial para la comprensión territorial de la ciudad.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <p><a href="visualizador.html">Visualizador</a></p>
+                <p><a href="catalogo.html">Catálogo</a></p>
+                <p><a href="servicios.html">Servicios</a></p>
+                <p><a href="info.html">Acerca de Mí</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Tecnologías</h3>
+                <p>• Sistemas de Información Geográfica (SIG)</p>
+                <p>• Análisis Geoespacial</p>
+                <p>• Cartografía Digital</p>
+                <p>• Visualización de Datos</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Diana L. Sierra E. - Visualización Geográfica de Cartagena de Indias. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 
 
-    var capa_inmueblesd = L.geoJson(cartagena_inmueblesd, {
-      pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, { icon: iconoInmueble});
-      },
-      onEachFeature: function (feature, layer) {
-        var nombre = feature.properties.nombre || "Inmueble";
-        layer.bindPopup('<b>' + nombre + '</b>');
-      }
-    }).addTo(mimapa);
-
-    var capa_bibliotecas = L.geoJson(cartagena_bibliotecas, {
-      pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, { icon: iconoLibro });
-      },
-      onEachFeature: function (feature, layer) {
-        var nombre = feature.properties.nombre || "Biblioteca";
-        layer.bindPopup('<b>' + nombre + '</b>');
-      }
-    }).addTo(mimapa);
-
-    var capa_iglesias = L.geoJson(cartagena_iglesias, {
-      pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, { icon: iconoIglesia });
-      },
-      onEachFeature: function (feature, layer) {
-        var nombre = feature.properties.nombre || "Iglesia";
-        layer.bindPopup('<b>' + nombre + '</b>');
-      }
-    }).addTo(mimapa);
-
-    var capa_roads = L.geoJson(cartagena_roads, { style: roadStyle }).addTo(mimapa);
-	
-	var capa_agua2020 = L.geoJson(agua_2020, {
-	style: {
-        color: '#006A89',
-        weight: 4,
-        dashArray: '4,4'
-      },
-      onEachFeature: function (feature, layer) {
-        var desc = feature.properties.descripcion || "Ascenso Mar 2020";
-        layer.bindPopup('<b>Capa Agua 2020:</b> ' + desc);
-      }
-    }).addTo(mimapa);
-	
-	var capa_agua2025 = L.geoJson(agua_2025, { 
-	style: {
-        color: '#006A89',
-        weight: 4,
-        dashArray: '4,4'
-      },
-      onEachFeature: function (feature, layer) {
-        var desc = feature.properties.descripcion || "Ascenso Mar 2020";
-        layer.bindPopup('<b>Capa Agua 2025:</b> ' + desc);
-      }
-    }).addTo(mimapa);
-	
-	var capa_agua2040 = L.geoJson(agua_2040, { 
-	style: {
-        color: '#006A89',
-        weight: 4,
-        dashArray: '4,4'
-      },
-      onEachFeature: function (feature, layer) {
-        var desc = feature.properties.descripcion || "Ascenso Mar 2020";
-        layer.bindPopup('<b>Capa Agua 2040:</b> ' + desc);
-      }
-    }).addTo(mimapa);	
- 
-    var capa_erosioncostera = L.geoJson(cartagena_erosioncostera, {
-      style: {
-        color: '#006A89',
-        weight: 4,
-        dashArray: '4,4'
-      },
-      onEachFeature: function (feature, layer) {
-        var desc = feature.properties.descripcion || "Área con erosión costera";
-        layer.bindPopup('<b>Erosión Costera:</b> ' + desc);
-      }
-    }).addTo(mimapa);
-
-    // Capas base y superpuestas
-    var capasbase = {
-      "Mapa OpenStreetMap": osmMap
-    };
-
-    var capasadicionales = {
-      "Barrios de Cartagena": capa_barrios,
-      "Zona de Influencia": capa_zinfluencia,
-      "Inmuebles Distrito": capa_inmueblesd,
-      "Áreas Turísticas": capa_aturisticas,
-      "Iglesias": capa_iglesias,
-      "Bibliotecas": capa_bibliotecas,
-      "Carreteras": capa_roads,
-      "Erosión Costera": capa_erosioncostera,
-	  "Nivel del Mar 2020": capa_agua2020,
-	  "Nivel del Mar 2025": capa_agua2025,
-	  "Nivel del Mar 2040": capa_agua2040
-    };
-
-    L.control.layers(capasbase, capasadicionales).addTo(mimapa);
-	
-	
-	
-	//Funciones del boton 
-	function abrirModal() {
-      document.getElementById("modalMetadatos").style.display = "block";
-    }
-
-    function cerrarModal() {
-      document.getElementById("modalMetadatos").style.display = "none";
-    }
-	
-	
-	//Metadatos ISO 
-	function verMetadatosISO19115() {
-      var capaSeleccionada = document.getElementById("selectCapa").value;
-      var xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-      xml += '<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd"\n';
-      xml += '    xmlns:gco="http://www.isotc211.org/2005/gco"\n';
-      xml += '    xmlns:gml="http://www.opengis.net/gml">\n';
-      
-      xml += '  <gmd:fileIdentifier>\n';
-      xml += '    <gco:CharacterString>' + capaSeleccionada + '_metadata</gco:CharacterString>\n';
-      xml += '  </gmd:fileIdentifier>\n';
-
-      xml += '  <gmd:language>\n';
-      xml += '    <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/" codeListValue="spa">es</gmd:LanguageCode>\n';
-      xml += '  </gmd:language>\n';
-
-      xml += '  <gmd:hierarchyLevel>\n';
-      xml += '    <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>\n';
-      xml += '  </gmd:hierarchyLevel>\n';
-
-      xml += '  <gmd:identificationInfo>\n';
-      xml += '    <gmd:MD_DataIdentification>\n';
-      xml += '      <gmd:citation>\n';
-      xml += '        <gmd:CI_Citation>\n';
-      xml += '          <gmd:title>\n';
-      xml += '            <gco:CharacterString>' + capaSeleccionada + '</gco:CharacterString>\n';
-      xml += '          </gmd:title>\n';
-      xml += '          <gmd:date>\n';
-      xml += '            <gmd:CI_Date>\n';
-      xml += '              <gmd:date>\n';
-      xml += '                <gco:Date>' + new Date().toISOString().split("T")[0] + '</gco:Date>\n';
-      xml += '              </gmd:date>\n';
-      xml += '              <gmd:dateType>\n';
-      xml += '                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#CI_DateTypeCode" codeListValue="creation">creation</gmd:CI_DateTypeCode>\n';
-      xml += '              </gmd:dateType>\n';
-      xml += '            </gmd:CI_Date>\n';
-      xml += '          </gmd:date>\n';
-      xml += '        </gmd:CI_Citation>\n';
-      xml += '      </gmd:citation>\n';
-
-      xml += '      <gmd:abstract>\n';
-      xml += '        <gco:CharacterString>Datos espaciales de ' + capaSeleccionada + ' en Cartagena de Indias.</gco:CharacterString>\n';
-      xml += '      </gmd:abstract>\n';
-
-      xml += '      <gmd:descriptiveKeywords>\n';
-      xml += '        <gmd:MD_Keywords>\n';
-      xml += '          <gmd:keyword>\n';
-      xml += '            <gco:CharacterString>Cartagena</gco:CharacterString>\n';
-      xml += '          </gmd:keyword>\n';
-      xml += '          <gmd:keyword>\n';
-      xml += '            <gco:CharacterString>' + capaSeleccionada + '</gco:CharacterString>\n';
-      xml += '          </gmd:keyword>\n';
-      xml += '        </gmd:MD_Keywords>\n';
-      xml += '      </gmd:descriptiveKeywords>\n';
-
-      xml += '      <gmd:spatialRepresentationType>\n';
-      xml += '        <gmd:MD_SpatialRepresentationTypeCode codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_SpatialRepresentationTypeCode" codeListValue="vector">vector</gmd:MD_SpatialRepresentationTypeCode>\n';
-      xml += '      </gmd:spatialRepresentationType>\n';
-
-      xml += '      <gmd:extent>\n';
-      xml += '        <gmd:EX_Extent>\n';
-      xml += '          <gmd:geographicElement>\n';
-      xml += '            <gmd:EX_GeographicBoundingBox>\n';
-      xml += '              <gmd:westBoundLongitude>\n';
-      xml += '                <gco:Decimal>-75.6</gco:Decimal>\n';
-      xml += '              </gmd:westBoundLongitude>\n';
-      xml += '              <gmd:eastBoundLongitude>\n';
-      xml += '                <gco:Decimal>-75.4</gco:Decimal>\n';
-      xml += '              </gmd:eastBoundLongitude>\n';
-      xml += '              <gmd:southBoundLatitude>\n';
-      xml += '                <gco:Decimal>10.3</gco:Decimal>\n';
-      xml += '              </gmd:southBoundLatitude>\n';
-      xml += '              <gmd:northBoundLatitude>\n';
-      xml += '                <gco:Decimal>10.5</gco:Decimal>\n';
-      xml += '              </gmd:northBoundLatitude>\n';
-      xml += '            </gmd:EX_GeographicBoundingBox>\n';
-      xml += '          </gmd:geographicElement>\n';
-      xml += '        </gmd:EX_Extent>\n';
-      xml += '      </gmd:extent>\n';
-
-      xml += '    </gmd:MD_DataIdentification>\n';
-      xml += '  </gmd:identificationInfo>\n';
-
-      xml += '  <gmd:distributionInfo>\n';
-      xml += '    <gmd:MD_Distribution>\n';
-      xml += '      <gmd:distributionFormat>\n';
-      xml += '        <gmd:MD_Format>\n';
-      xml += '          <gmd:name>\n';
-      xml += '            <gco:CharacterString>GeoJSON</gco:CharacterString>\n';
-      xml += '          </gmd:name>\n';
-      xml += '        </gmd:MD_Format>\n';
-      xml += '      </gmd:distributionFormat>\n';
-      xml += '    </gmd:MD_Distribution>\n';
-      xml += '  </gmd:distributionInfo>\n';
-
-      xml += '</gmd:MD_Metadata>\n';
-
-      var nuevaVentana = window.open();
-      nuevaVentana.document.write('<pre>' + xml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
-      nuevaVentana.document.write('<button onclick="descargarXML()">Descargar XML</button>');
-      nuevaVentana.document.write('<script>function descargarXML(){var blob = new Blob([' + JSON.stringify(xml) + '], {type: "application/xml"}); var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href = url; a.download = "metadatos_ISO19115.xml"; a.click(); URL.revokeObjectURL(url);}</' + 'script>');
-      nuevaVentana.document.close();
-      cerrarModal();
-    }
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
 
 
-
-	
-	//Metadatos Dublin Core
-	function verMetadatosDublinCore() {
-      var capaSeleccionada = document.getElementById("selectCapa").value;
-      var datos = [];
-      var capaObj = {
-        "barrios": capa_barrios,
-        "zinfluencia": capa_zinfluencia,
-        "inmueblesd": capa_inmueblesd,
-        "aturisticas": capa_aturisticas,
-        "iglesias": capa_iglesias,
-        "bibliotecas": capa_bibliotecas,
-        "roads": capa_roads,
-        "erosioncostera": capa_erosioncostera,
-        "agua2020": capa_agua2020,
-        "agua2025": capa_agua2025,
-        "agua2040": capa_agua2040
-      }[capaSeleccionada];
-
-      if (capaObj) {
-        capaObj.eachLayer(function (layer) {
-          if (layer.feature && layer.feature.properties) {
-            datos.push(layer.feature.properties);
-          }
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
         });
-      }
 
-      var xml = '<?xml version="1.0" encoding="UTF-8"?>\n<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n';
-      datos.forEach(function (item, index) {
-        xml += '  <record>\n';
-        xml += '    <dc:title>' + (item.nombre || item.Zona_Inf || item.descripcion || "Feature " + (index + 1)) + '</dc:title>\n';
-        xml += '    <dc:description>' + (item.descripcion || "Sin descripción") + '</dc:description>\n';
-        xml += '    <dc:subject>' + capaSeleccionada + '</dc:subject>\n';
-        xml += '    <dc:identifier>' + (item.ID || index + 1) + '</dc:identifier>\n';
-        xml += '    <dc:type>Dataset</dc:type>\n';
-        xml += '    <dc:format>application/geo+json</dc:format>\n';
-        xml += '    <dc:language>es</dc:language>\n';
-        xml += '  </record>\n';
-      });
-      xml += '</metadata>';
 
-      var nuevaVentana = window.open();
-      nuevaVentana.document.write('<pre>' + xml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
-      nuevaVentana.document.write('<button onclick="descargarXML()">Descargar XML</button>');
-      nuevaVentana.document.write('<script>function descargarXML(){var blob = new Blob([' + JSON.stringify(xml) + '], {type: "application/xml"}); var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href = url; a.download = "metadatos_dublin_core.xml"; a.click(); URL.revokeObjectURL(url);}</' + 'script>');
-      nuevaVentana.document.close();
-      cerrarModal();
-    }
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        }));
 
-	
-	
-	
-  </script>
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 30px rgba(0, 0, 0, 0.15)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+
+        // Function to navigate to visualizer
+        function navigateToVisualizer() {
+            // Aquí puedes agregar la lógica para navegar al visualizador
+            // Por ejemplo, redireccionar a tu archivo de visualización existente
+            alert('Redirigiendo al visualizador...');
+            window.location.href = 'visualizador.html';
+        }
+
+
+        // Active navigation highlighting
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+
+        // Observe nav cards for animation
+        document.querySelectorAll('.nav-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+
+
+        // Observe feature cards for animation
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
 </body>
 </html>
