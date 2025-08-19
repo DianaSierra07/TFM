@@ -266,7 +266,7 @@
                     <li><a href="visualizador.html">Visualizador</a></li>
                     <li><a href="catalogo.html">Catálogo</a></li>
                     <li><a href="servicios.html">Servicios</a></li>
-                    <li><a href="info.html">Acerca de Mí</a></li>
+                    <li><a href="info.html">Acerca de</a></li>
                 </ul>
             </nav>
         </div>
@@ -280,34 +280,32 @@
 
 
         <div class="page-title">
-            <h1>Servicios Profesionales</h1>
-            <p>Ofrecemos servicios especializados de análisis geoespacial y gestión del patrimonio cultural de Cartagena de Indias</p>
+            <h1>Servicios Web IDE Patrimonial</h1>
+            <p>Los servicios WMS (Web Map Service), WFS (Web Feature Service) y CSW (Catalog Service for the Web) son estándares definidos por el OGC que permiten la interoperabilidad en una Infraestructura de Datos Espaciales </p>
         </div>
 
 
         <div class="services-grid">
             <div class="service-card">
                 <div class="service-icon">🗺️</div>
-                <h3>Análisis Geoespacial</h3>
-                <p>Servicios especializados en análisis de datos geográficos, cartografía digital y sistemas de información geográfica para la gestión del patrimonio urbano.</p>
+                <h3>Iglesias</h3>
                 <div class="service-links">
                     <h4>Enlaces de interés:</h4>
-                    <a href="#" class="service-link">Portal de datos geográficos</a>
-                    <a href="#" class="service-link">Herramientas de análisis espacial</a>
-                    <a href="#" class="service-link">Consultoría en SIG</a>
+                    <a>WMS:</a><a href="http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AIglesias&bbox=-75.56318443289993%2C10.354620598094762%2C-75.45379952180554%2C10.470681931613127&width=723&height=768&srs=EPSG%3A4326&styles=&format=application/openlayers" class="service-link">http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AIglesias&bbox</a>
+                    <a>WFS:</a><a href="http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3AIglesias" class="service-link">http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AIglesias&maxFeatures=50</a>
+                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AIglesias&outputFormat=application%2Fjson&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3AIglesias</a>
                 </div>
             </div>
 
 
             <div class="service-card">
                 <div class="service-icon">🏛️</div>
-                <h3>Gestión Patrimonial</h3>
-                <p>Asesoría en la documentación, catalogación y preservación del patrimonio arquitectónico y cultural de Cartagena de Indias.</p>
-                <div class="service-links">
+                <h3>Bibliotecas</h3>
                     <h4>Enlaces de interés:</h4>
-                    <a href="#" class="service-link">Inventario patrimonial</a>
-                    <a href="#" class="service-link">Planes de manejo</a>
-                    <a href="#" class="service-link">Normativa patrimonial</a>
+                    <div class="service-links">
+                    <a>WMS:</a><a href="" class="service-link"></a>
+                    <a>WFS:</a><a href="" class="service-link"></a>
+                    <a>CSW:</a><a href="" class="service-link"></a>
                 </div>
             </div>
            
@@ -315,52 +313,48 @@
 
             <div class="service-card">
                 <div class="service-icon">📊</div>
-                <h3>Visualización de Datos</h3>
-                <p>Creación de mapas interactivos, dashboards y herramientas de visualización para la toma de decisiones en gestión urbana y patrimonial.</p>
+                <h3>Áreas Turisticas</h3>
                 <div class="service-links">
                     <h4>Enlaces de interés:</h4>
-                    <a href="#" class="service-link">Mapas interactivos</a>
-                    <a href="#" class="service-link">Dashboards ejecutivos</a>
-                    <a href="#" class="service-link">Reportes dinámicos</a>
+                    <a>WMS:</a><a href="" class="service-link"></a>
+                    <a>WFS:</a><a href="" class="service-link"></a>
+                    <a>CSW:</a><a href="" class="service-link"></a>
                 </div>
             </div>
 
 
             <div class="service-card">
                 <div class="service-icon">🎓</div>
-                <h3>Capacitación y Formación</h3>
-                <p>Programas de capacitación en tecnologías geoespaciales, gestión patrimonial y uso de herramientas digitales para instituciones públicas y privadas.</p>
+                <h3>Inmuebles del Distrito</h3>
                 <div class="service-links">
                     <h4>Enlaces de interés:</h4>
-                    <a href="#" class="service-link">Cursos de SIG</a>
-                    <a href="#" class="service-link">Talleres de cartografía</a>
-                    <a href="#" class="service-link">Certificaciones profesionales</a>
+                    <a>WMS:</a><a href="" class="service-link"></a>
+                    <a>WFS:</a><a href="" class="service-link"></a>
+                    <a>CSW:</a><a href="" class="service-link"></a>
                 </div>
             </div>
 
 
             <div class="service-card">
                 <div class="service-icon">🔍</div>
-                <h3>Investigación y Desarrollo</h3>
-                <p>Proyectos de investigación aplicada en tecnologías emergentes para la gestión del patrimonio cultural y el desarrollo urbano sostenible.</p>
+                <h3>Erosión Costera</h3>
                 <div class="service-links">
                     <h4>Enlaces de interés:</h4>
-                    <a href="#" class="service-link">Proyectos de investigación</a>
-                    <a href="#" class="service-link">Publicaciones científicas</a>
-                    <a href="#" class="service-link">Colaboraciones académicas</a>
+                    <a>WMS:</a><a href="http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AErosionCostera&bbox=-75.79736471699994%2C10.081520114000062%2C-75.2920702799999%2C10.703779554000052&width=623&height=768&srs=EPSG%3A4326&styles=&format=application/openlayers" class="service-link">http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AErosionCostera&bbox</a>
+                    <a>WFS:</a><a href="http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3AErosionCostera" class="service-link">http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3AErosionCostera</a>
+                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AErosionCostera&outputFormat=application%2Fjson&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3AErosionCostera</a>
                 </div>
             </div>
 
 
             <div class="service-card">
                 <div class="service-icon">🤝</div>
-                <h3>Consultoría Especializada</h3>
-                <p>Asesoría técnica personalizada para proyectos específicos de gestión territorial, planificación urbana y conservación patrimonial.</p>
+                <h3>Zona de Influencia</h3>
                 <div class="service-links">
                     <h4>Enlaces de interés:</h4>
-                    <a href="#" class="service-link">Contacto para consultoría</a>
-                    <a href="#" class="service-link">Portafolio de proyectos</a>
-                    <a href="#" class="service-link">Referencias y testimonios</a>
+                    <a>WMS:</a><a href="" class="service-link"></a>
+                    <a>WFS:</a><a href="" class="service-link"></a>
+                    <a>CSW:</a><a href="" class="service-link"></a>
                 </div>
             </div>
         </div>
