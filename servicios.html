@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #636880 0%, #1a3761 100%);
             min-height: 100vh;
             color: #333;
         }
@@ -193,6 +193,12 @@
             padding: 0.5rem 0;
             border-bottom: 1px solid transparent;
             transition: all 0.3s ease;
+            
+            /* 👇 lo importante para que no se salgan */
+            word-wrap: break-word;     /* para navegadores antiguos */
+            overflow-wrap: break-word; /* para navegadores modernos */
+            white-space: normal;       /* permite saltos de línea */
+            max-width: 100%;           /* nunca exceda el ancho de la tarjeta */
         }
 
 
@@ -293,7 +299,7 @@
                     <h4>Enlaces de interés:</h4>
                     <a>WMS:</a><a href="http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AIglesias&bbox=-75.56318443289993%2C10.354620598094762%2C-75.45379952180554%2C10.470681931613127&width=723&height=768&srs=EPSG%3A4326&styles=&format=application/openlayers" class="service-link">http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AIglesias&bbox</a>
                     <a>WFS:</a><a href="http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3AIglesias" class="service-link">http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AIglesias&maxFeatures=50</a>
-                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AIglesias&outputFormat=application%2Fjson&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3AIglesias</a>
+                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AIglesias&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3AIglesias</a>
                 </div>
             </div>
 
@@ -303,9 +309,9 @@
                 <h3>Bibliotecas</h3>
                     <h4>Enlaces de interés:</h4>
                     <div class="service-links">
-                    <a>WMS:</a><a href="" class="service-link"></a>
-                    <a>WFS:</a><a href="" class="service-link"></a>
-                    <a>CSW:</a><a href="" class="service-link"></a>
+                    <a>WMS:</a><a href="http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AIPCC_Bibliotecas_Centro_Cultura&bbox=-75.5372451753025%2C10.2858798586192%2C-75.3976962111071%2C10.557036978205499&width=395&height=768&srs=EPSG%3A4326&styles=&format=application/openlayers"class="service-link">http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AIglesias&bbox</a>
+                    <a>WFS:</a><a href="http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3AIPCC_Bibliotecas_Centro_Cultura" class="service-link">http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AIPCC_Bibliotecas_Centro_Cultura&</a>
+                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AIPCC_Bibliotecas_Centro_Cultura&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3AIPCC_Bibliotecas_Centro_Cultura</a>
                 </div>
             </div>
            
@@ -316,9 +322,9 @@
                 <h3>Áreas Turisticas</h3>
                 <div class="service-links">
                     <h4>Enlaces de interés:</h4>
-                    <a>WMS:</a><a href="" class="service-link"></a>
-                    <a>WFS:</a><a href="" class="service-link"></a>
-                    <a>CSW:</a><a href="" class="service-link"></a>
+                    <a>WMS:</a><a href="http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AAtractivosTuristicos&bbox=-75.5904899958335%2C10.314340282802117%2C-75.52549770225723%2C10.431162474963838&width=427&height=768&srs=EPSG%3A4326&styles=&format=application/openlayers" class="service-link">http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AAtractivosTuristicos&bbox=</a>
+                    <a>WFS:</a><a href="http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3AAtractivosTuristicos" class="service-link">http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AAtractivosTuristicos&</a>
+                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AAtractivosTuristicos&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3AAtractivosTuristicos</a>
                 </div>
             </div>
 
@@ -328,9 +334,9 @@
                 <h3>Inmuebles del Distrito</h3>
                 <div class="service-links">
                     <h4>Enlaces de interés:</h4>
-                    <a>WMS:</a><a href="" class="service-link"></a>
-                    <a>WFS:</a><a href="" class="service-link"></a>
-                    <a>CSW:</a><a href="" class="service-link"></a>
+                    <a>WMS:</a><a href="http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3Ainmuebles_distrito&bbox=-75.56222546337234%2C10.283187022568416%2C-75.39790348212387%2C10.648994066825228&width=344&height=768&srs=EPSG%3A4326&styles=&format=application/openlayers" class="service-link">http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3Ainmuebles_distrito&bbox=</a>
+                    <a>WFS:</a><a href="http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3Ainmuebles_distrito" class="service-link">http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3Ainmuebles_distrito</a>
+                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3Ainmuebles_distrito&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3Ainmuebles_distrito</a>
                 </div>
             </div>
 
@@ -342,7 +348,7 @@
                     <h4>Enlaces de interés:</h4>
                     <a>WMS:</a><a href="http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AErosionCostera&bbox=-75.79736471699994%2C10.081520114000062%2C-75.2920702799999%2C10.703779554000052&width=623&height=768&srs=EPSG%3A4326&styles=&format=application/openlayers" class="service-link">http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3AErosionCostera&bbox</a>
                     <a>WFS:</a><a href="http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3AErosionCostera" class="service-link">http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3AErosionCostera</a>
-                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AErosionCostera&outputFormat=application%2Fjson&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3AErosionCostera</a>
+                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3AErosionCostera&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3AErosionCostera</a>
                 </div>
             </div>
 
@@ -352,9 +358,9 @@
                 <h3>Zona de Influencia</h3>
                 <div class="service-links">
                     <h4>Enlaces de interés:</h4>
-                    <a>WMS:</a><a href="" class="service-link"></a>
-                    <a>WFS:</a><a href="" class="service-link"></a>
-                    <a>CSW:</a><a href="" class="service-link"></a>
+                    <a>WMS:</a><a href="http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3Azonainfluenciach&bbox=-75.5548565022473%2C10.410033989061995%2C-75.52825894396123%2C10.436068436581028&width=768&height=751&srs=EPSG%3A4326&styles=&format=application/openlayers" class="service-link">http://localhost:8080/geoserver/TFM/wms?service=WMS&version=1.1.0&request=GetMap&layers=TFM%3Azonainfluenciach&</a>
+                    <a>WFS:</a><a href="http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3Azonainfluenciach" class="service-link">http://localhost:8080/geoserver/TFM/wms/kml?layers=TFM%3Azonainfluenciach</a>
+                    <a>CSW:</a><a href="http://localhost:8080/geoserver/TFM/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=TFM%3Azonainfluenciach&maxFeatures=50" class="service-link">http://localhost:8080/geoserver/TFM/csw?request=GetCapabilities&service=TFM%3Azonainfluenciach</a>
                 </div>
             </div>
         </div>
