@@ -700,12 +700,12 @@
                 const item = feature.properties;
                 xml += '  <record>\n';
                 xml += '    <dc:title>' + (item.nombre || item.Zona_Inf || item.descripcion || `Feature ${index + 1}`) + '</dc:title>\n';
-                xml += '    <dc:description>' + (item.descripcion || "Sin descripción") + '</dc:description>\n';
                 xml += '    <dc:subject>' + selectedCapa + '</dc:subject>\n';
-                xml += '    <dc:identifier>' + (item.ID || index + 1) + '</dc:identifier>\n';
+                xml += '    <dc:description>' + (item.descripcion || "Sin descripción") + '</dc:description>\n';
+                xml += '    <dc:language>es</dc:language>\n';
                 xml += '    <dc:type>Dataset</dc:type>\n';
                 xml += '    <dc:format>application/geo+json</dc:format>\n';
-                xml += '    <dc:language>es</dc:language>\n';
+                xml += '    <dc:identifier>' + (item.ID || index + 1) + '</dc:identifier>\n';
                 xml += '  </record>\n';
             });
             xml += '</metadata>';

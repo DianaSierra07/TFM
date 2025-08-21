@@ -603,7 +603,7 @@
         // Variables para nuevas funcionalidades
    
        
-        // Funcionalidad del menú móvil - EXACTAMENTE como en el original
+        // Funcionalidad del menú móvil 
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.querySelector('.hamburger');
             const navMenu = document.querySelector('.nav-menu');
@@ -802,11 +802,20 @@
 
 
         var capa_erosioncostera = L.geoJson(cartagena_erosioncostera, {
-            style: { color: '#006A89', weight: 4, dashArray: '4,4' },
+            style: { color: '#F22900', weight: 4, dashArray: '4,4' },
             onEachFeature: function (feature, layer) {
                 var desc = feature.properties.descripcion || "Área con erosión costera";
                 layer.bindPopup('<b>Erosión Costera:</b> ' + desc);
             }
+        }).addTo(mimapa);
+
+	    //Servicio WMS
+	    var Hitos = L.tileLayer.wms("http://localhost:8080/geoserver/TFM/wms?", {
+		    layers: "Hitos" ,
+		    format: "image/png",
+		    transparent:true,
+		    opacity: 1
+
         }).addTo(mimapa);
 
 
